@@ -1,0 +1,54 @@
+{
+  "name": "grena-contexto",
+  "version": "1.0.0",
+  "description": "GREÑA CONTEXTO - juego multijugador de palabras por similitud semántica",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build-vocab": "node scripts/build-vocab.js es 30000",
+    "start": "node server/index.js",
+    "desktop": "electron .",
+    "dist:win": "electron-builder --win nsis"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.0.0",
+    "better-sqlite3": "^11.0.0",
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
+  },
+  "main": "desktop/main.cjs",
+  "devDependencies": {
+    "electron": "^39.2.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.grena.contexto",
+    "productName": "GREÑA CONTEXTO",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "desktop/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "GRENA-CONTEXTO-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}

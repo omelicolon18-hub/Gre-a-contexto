@@ -1,0 +1,11 @@
+node_modules
+data/*.db*
+data/es/vocab.f32
+data/es/freq.txt
+
+node_modules/
+dist/
+.env
+*.db
+*.db-shm
+*.db-wal
