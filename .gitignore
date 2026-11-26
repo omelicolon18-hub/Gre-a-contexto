@@ -1,0 +1,14 @@
+node_modules/
+desktop/node_modules/
+dist/
+desktop/dist/
+.env
+.env.*
+!.env.example
+npm-debug.log*
+*.db
+*.db-shm
+*.db-wal
+data/es/vocab.json
+data/es/vocab.f32
+data/es/freq.txt
