@@ -3,7 +3,8 @@
 Juego multijugador en tiempo real. Todos los jugadores intentan encontrar la misma palabra secreta; el servidor calcula posiciones por similitud semántica.
 
 ## Qué contiene este proyecto
-- Salas privadas con código y enlace de invitación.
+- Salas privadas con código y enlace de invitación; los enlaces de invitación tienen prioridad al entrar desde otro navegador o sala.
+- Reconexión automática: si se corta internet, el jugador vuelve a autenticarse y recupera su sala mientras el servidor conserve esa partida.
 - Partidas de 2 a 10 jugadores.
 - WebSockets para sincronización en tiempo real.
 - Rondas, pistas, ranking de sala, WINS y estadísticas guardadas en SQLite.
@@ -18,7 +19,7 @@ Juego multijugador en tiempo real. Todos los jugadores intentan encontrar la mis
 4. En el servicio añade un **Volume** montado en `/data`.
 5. Configura `DB_PATH=/data/grena.db` y `PORT=3000` si Railway no los detecta automáticamente.
 6. Despliega y espera a que termine el build. La primera construcción genera el vocabulario y descarga el modelo semántico; puede tardar varios minutos y consumir bastante memoria.
-7. Genera un dominio público HTTPS en Railway. La dirección debe abrir el juego y `/api/health` debe responder `{"ok":true}`.
+7. Genera un dominio público HTTPS en Railway. La dirección debe abrir el juego y `/api/health` debe responder JSON con `ok: true`, `game: "grena-contexto"` y el tamaño del vocabulario.
 
 **Importante:** el servicio debe mantener un proceso Node/Docker activo, admitir WebSockets y conservar el volumen `/data`. No uses un hosting estático para el servidor.
 
@@ -43,15 +44,20 @@ npm start
 ```
 Abre `http://localhost:3000`.
 
-## 4. Modo stream
+## 4. Pruebas automáticas
+
+Ejecuta `npm test` para comprobar la normalización de palabras y el cálculo básico del ranking semántico.
+
+## 5. Modo stream
 Añade `?stream=1` a la URL para usar el diseño compacto de OBS. Horizontal: 1920x1080. Vertical: 1080x1920.
 
-## 5. Seguridad y operación
+## 6. Seguridad y operación
 - El repositorio público permite ver y descargar el código. No añadas colaboradores con permisos de escritura si quieres ser el único editor.
 - No subas tokens, contraseñas ni archivos `.env`.
-- Las salas están en memoria: si Railway reinicia el servidor, las partidas activas se pierden; los perfiles y WINS permanecen en SQLite si el volumen está montado.
+- Las salas están en memoria: si Railway reinicia el servidor, las partidas activas se pierden; los perfiles y WINS permanecen en SQLite si el volumen está montado. La reconexión automática funciona ante cortes breves mientras el proceso del servidor siga activo.
 - El instalador de Windows es un cliente de escritorio: necesita que el servidor online esté desplegado para jugar por internet.
-- Antes de abrirlo al público, prueba dos cuentas en dos dispositivos y verifica la persistencia del volumen y los WebSockets.
+- Antes de abrirlo al público, prueba dos cuentas en dos dispositivos, corta y recupera la conexión de uno, y verifica la persistencia del volumen y los WebSockets.
+- El instalador `.exe` es un cliente de escritorio; no incluye el servidor ni permite jugar online hasta que publiques el backend.
 
 ## Stack
 Node.js, Express, WebSockets, SQLite, `@huggingface/transformers`, embeddings multilingües y Electron.

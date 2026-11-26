@@ -1,11 +1,13 @@
+.git
+.github
 node_modules
-data/*.db*
+npm-debug.log
+.env
+.DS_Store
+*.zip
+*.exe
+dist
+# El vocabulario se construye dentro de la imagen Docker.
+data/es/vocab.json
 data/es/vocab.f32
 data/es/freq.txt
-
-node_modules/
-dist/
-.env
-*.db
-*.db-shm
-*.db-wal

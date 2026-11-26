@@ -10,7 +10,8 @@
     "build-vocab": "node scripts/build-vocab.js es 30000",
     "start": "node server/index.js",
     "desktop": "electron .",
-    "dist:win": "electron-builder --win nsis"
+    "dist:win": "electron-builder --win nsis",
+    "test": "node --test"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.0.0",

@@ -16,7 +16,12 @@ function send(o) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); el
 function connect() {
   ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host);
   ws.onopen = () => { $('#conn').className = 'dot'; if (ls.grena_token) send({ t: 'auth', token: ls.grena_token, name: ls.grena_name || '' }); };
-  ws.onclose = () => { $('#conn').className = 'dot off'; user = null; setTimeout(connect, 1500); };
+  ws.onclose = () => {
+    $('#conn').className = 'dot off';
+    // Fuerza la restauración de la sala después de autenticar al reconectar.
+    user = null; room = null; me = { guesses: [] };
+    setTimeout(connect, 1500);
+  };
   ws.onmessage = (e) => on(JSON.parse(e.data));
 }
 function ensureAuth(name, cb) {
@@ -32,7 +37,11 @@ function on(m) {
     case 'auth_ok':
       user = m.user; if (m.token) ls.grena_token = m.token; ls.grena_name = user.name;
       if (pending) { const p = pending; pending = null; p(); }
-      else if (!room && ls.grena_room) send({ t: 'join', code: ls.grena_room });
+      else if (!room) {
+        const invited = new URLSearchParams(location.search).get('sala');
+        const savedRoom = invited || ls.grena_room;
+        if (savedRoom) send({ t: 'join', code: savedRoom });
+      }
       break;
     case 'state':
       room = m.room; me = m.me; skew = room.now - Date.now(); ls.grena_room = room.code;
@@ -100,7 +109,7 @@ function buildLobby() {
     <label>Jugadores máximos<input id="s_max" type="number" min="2" max="10"></label>
     <label>Rondas por partida<input id="s_rounds" type="number" min="1" max="15"></label>
     <label>Minutos por fase (0 = sin límite)<input id="s_time" type="number" min="0" max="60"></label>
-    <p class="hint" style="margin:0">Fase 1: 15 min. Si nadie se acerca (mejor que #300), aparece una pista. Fase 2: otros 15 min; si nadie la adivina, gana quien más se acercó.</p>
+    <p class="hint" style="margin:0">Cada fase dura el tiempo configurado. Si nadie se acerca lo suficiente en la primera fase, aparece una pista. Si nadie encuentra la palabra al terminar la segunda, gana quien más se acercó.</p>
     <label>Dificultad<select id="s_difficulty"><option value="easy">Fácil</option><option value="medium">Media</option><option value="hard">Difícil</option></select></label>
     <label class="chk"><input id="s_publicRanking" type="checkbox"> Ranking público (ver quién está más cerca)</label>
     <label class="chk"><input id="s_publicWords" type="checkbox"> Mostrar las palabras que escribe cada jugador</label>
