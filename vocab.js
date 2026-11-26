@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'data');
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), 'data');
 const langs = new Map();
 const plain = (w) => w.normalize('NFD').replace(/n\u0303/g, 'ñ').replace(/[\u0300-\u036f]/g, '');
 
