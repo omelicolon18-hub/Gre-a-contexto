@@ -10,6 +10,7 @@ const dir = path.join('data', lang);
 const FREQ_URL = `https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/${lang}/${lang}_50k.txt`;
 const OK = /^[a-záéíóúüñ]{3,24}$/;
 
+fs.mkdirSync(dir, { recursive: true });
 const secrets = JSON.parse(fs.readFileSync(path.join(dir, 'secrets.json'), 'utf8'));
 const freqFile = path.join(dir, 'freq.txt');
 if (!fs.existsSync(freqFile)) {
