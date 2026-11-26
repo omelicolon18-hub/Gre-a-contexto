@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { lookup, makeRanking } from '../server/vocab.js';
+import { lookup, makeRanking } from './vocab.js';
 
 const words = ['casa', 'perro', 'árbol'];
 const plain = (w) => w.normalize('NFD').replace(/n\u0303/g, 'ñ').replace(/[\u0300-\u036f]/g, '');
