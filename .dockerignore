@@ -1,0 +1,13 @@
+.git
+.github
+node_modules
+desktop
+dist
+*.zip
+*.exe
+.env
+npm-debug.log
+.DS_Store
+data/es/vocab.json
+data/es/vocab.f32
+data/es/freq.txt
