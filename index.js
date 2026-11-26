@@ -17,7 +17,7 @@ app.disable('x-powered-by');
 app.get('/api/health', (_, res) => res.json({ ok: true, game: 'grena-contexto', language: 'es', vocabulary: vocab.load('es').size }));
 app.get('/api/leaderboard', (_, res) => res.json(db.leaderboard()));
 app.get('/api/profile/:id', (req, res) => { const p = db.profile(req.params.id); p ? res.json(p) : res.status(404).json({ error: 'No existe' }); });
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server, maxPayload: 4096 });
