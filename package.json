@@ -13,7 +13,7 @@
     "desktop": "npm --prefix desktop start",
     "dist:win": "npm --prefix desktop run dist:win",
     "cf:dev": "wrangler dev --config wrangler.toml",
-    "cf:deploy": "npm run cf:build-vocab && wrangler deploy --config wrangler.toml",
+    "cf:deploy": "wrangler d1 migrations apply grena-contexto --remote && wrangler deploy --config wrangler.toml",
     "cf:d1:apply": "wrangler d1 migrations apply grena-contexto --remote",
     "cf:build-vocab": "node build-vocab.js es 10000"
   },
