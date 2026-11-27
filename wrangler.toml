@@ -9,7 +9,7 @@ binding = "ASSETS"
 [[d1_databases]]
 binding = "DB"
 database_name = "grena-contexto"
-database_id = "REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID"
+database_id = "76f2dd25-4ef7-4962-a911-26b3255c6f62"
 migrations_dir = "cloudflare/migrations"
 
 [[durable_objects.bindings]]
