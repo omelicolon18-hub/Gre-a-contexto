@@ -40,4 +40,10 @@ for (let i = 0; i < words.length; i += B) {
 }
 fs.writeFileSync(path.join(dir, 'vocab.json'), JSON.stringify(words));
 fs.writeFileSync(path.join(dir, 'vocab.f32'), Buffer.from(out.buffer));
-console.log(`Listo: ${words.length} palabras, dim ${dim}`);
+// Cloudflare serves these generated files as static assets, outside the Worker bundle.
+const assetDir = path.join('public', 'data', lang);
+fs.mkdirSync(assetDir, { recursive: true });
+fs.copyFileSync(path.join(dir, 'vocab.json'), path.join(assetDir, 'vocab.json'));
+fs.copyFileSync(path.join(dir, 'vocab.f32'), path.join(assetDir, 'vocab.f32'));
+fs.copyFileSync(path.join(dir, 'secrets.json'), path.join(assetDir, 'secrets.json'));
+console.log(`Listo: ${words.length} palabras, dim ${dim}. Assets: ${assetDir}`);
