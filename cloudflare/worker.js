@@ -36,7 +36,7 @@ export class GameRooms {
       const dim = vecs.length / words.length;
       if (!words.length || !Number.isInteger(dim) || dim < 1) throw new Error("El vocabulario semántico está dañado.");
       const exact = new Map(), plain = new Map();
-      words.forEach((w,i) => { exact.set(w,i); const k=w.normalize("NFD").replace(/n\\u0303/g,"ñ").replace(/[\\u0300-\\u036f]/g,""); if(!plain.has(k)) plain.set(k,i); });
+      words.forEach((w,i) => { exact.set(w,i); const k=w.normalize("NFD").replace(/n\u0303/g,"ñ").replace(/[\u0300-\u036f]/g,""); if(!plain.has(k)) plain.set(k,i); });
       return { words, vecs, dim, secrets, exact, plain, size: words.length };
     })();
     return this.vocabPromise;
@@ -131,7 +131,7 @@ export class GameRooms {
   async guess(r,c,input) {
     const p=r.players.get(c.user.id);if(r.phase!=="playing"||!p||!p.inRound||p.found)return;
     const w=String(input||"").normalize("NFC").toLowerCase().trim();if(!/^[a-záéíóúüñ]{2,30}$/.test(w))return this.send(c,{t:"guess_error",error:"No conozco esa palabra. Prueba con otra."});
-    const plain=x=>x.normalize("NFD").replace(/n\\u0303/g,"ñ").replace(/[\\u0300-\\u036f]/g,"");
+    const plain=x=>x.normalize("NFD").replace(/n\u0303/g,"ñ").replace(/[\u0300-\u036f]/g,"");
     const i=r.L.exact.has(w)?r.L.exact.get(w):r.L.plain.get(plain(w));if(i===undefined)return this.send(c,{t:"guess_error",error:"No conozco esa palabra. Prueba con otra."});
     const word=r.L.words[i];if(p.seen.has(word))return this.send(c,{t:"guess_error",error:"Ya probaste esa palabra."});
     const rank=r.rank[i];p.seen.add(word);p.guesses.push({word,rank,n:p.guesses.length+1});if(rank<p.best){p.best=rank;p.bestAt=Date.now();}
