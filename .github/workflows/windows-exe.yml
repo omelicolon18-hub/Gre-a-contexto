@@ -5,6 +5,13 @@ on:
     branches: [main]
     paths:
       - 'desktop/**'
+      - 'public/**'
+      - 'index.js'
+      - 'app.js'
+      - 'style.css'
+      - 'rooms.js'
+      - 'db.js'
+      - 'vocab.js'
       - '.github/workflows/windows-exe.yml'
 permissions:
   contents: read
