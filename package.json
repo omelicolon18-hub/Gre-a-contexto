@@ -14,7 +14,8 @@
     "dist:win": "npm --prefix desktop run dist:win",
     "cf:dev": "wrangler dev --config wrangler.toml",
     "cf:deploy": "wrangler deploy --config wrangler.toml",
-    "cf:d1:apply": "wrangler d1 migrations apply grena-contexto --remote"
+    "cf:d1:apply": "wrangler d1 migrations apply grena-contexto --remote",
+    "cf:build-vocab": "node build-vocab.js es 10000"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.0.0",
