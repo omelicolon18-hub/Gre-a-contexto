@@ -5,11 +5,41 @@ const hash = async (s) => Array.from(new Uint8Array(await crypto.subtle.digest("
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (request.headers.get("Upgrade")?.toLowerCase() === "websocket") {
-      const id = env.ROOMS.idFromName("global-room-router");
-      return env.ROOMS.get(id).fetch(request);
+    if (url.pathname === "/api/health") {
+      const checks = { roomsBinding: !!env.ROOMS, d1Binding: !!env.DB, assetsBinding: !!env.ASSETS };
+      try {
+        if (env.DB) {
+          await env.DB.prepare("SELECT id FROM players LIMIT 1").all();
+          checks.d1Ready = true;
+        }
+      } catch (e) { checks.d1Ready = false; checks.d1Error = String(e.message || e); }
+      try {
+        if (env.ASSETS) {
+          const r = await env.ASSETS.fetch(new Request("https://assets.local/data/es/vocab.json"));
+          checks.vocabulary = r.ok ? "available" : "missing";
+          checks.vocabularyStatus = r.status;
+        }
+      } catch (e) { checks.vocabulary = "error"; checks.vocabularyError = String(e.message || e); }
+      try {
+        if (env.ROOMS) {
+          const id = env.ROOMS.idFromName("global-room-router");
+          const r = await env.ROOMS.get(id).fetch("https://rooms.local/__health");
+          checks.durableObject = r.ok ? await r.json() : { ok: false, status: r.status };
+        }
+      } catch (e) { checks.durableObject = { ok: false, error: String(e.message || e) }; }
+      const ok = checks.roomsBinding && checks.d1Binding && checks.assetsBinding && checks.d1Ready && checks.vocabulary === "available" && checks.durableObject?.ok;
+      return json({ ok: !!ok, game: "grena-contexto", platform: "cloudflare", checks }, ok ? 200 : 503);
     }
-    if (url.pathname === "/api/health") return json({ ok: true, game: "grena-contexto", platform: "cloudflare", multiplayer: "websocket-enabled" });
+    if (request.headers.get("Upgrade")?.toLowerCase() === "websocket") {
+      try {
+        if (!env.ROOMS) throw new Error("Falta el binding ROOMS en Cloudflare.");
+        const id = env.ROOMS.idFromName("global-room-router");
+        return await env.ROOMS.get(id).fetch(request);
+      } catch (e) {
+        console.error("WebSocket routing failed:", e);
+        return json({ error: "No se pudo iniciar el servidor de salas.", detail: String(e.message || e) }, 503);
+      }
+    }
     if (url.pathname === "/api/leaderboard") {
       const { results } = await env.DB.prepare("SELECT id,name,games,wins,ROUND(100.0*wins/MAX(games,1),1) AS rate FROM players WHERE games>0 ORDER BY wins DESC,rate DESC LIMIT 50").all();
       return json(results);
@@ -42,6 +72,8 @@ export class GameRooms {
     return this.vocabPromise;
   }
   async fetch(request) {
+    const url = new URL(request.url);
+    if (url.pathname === "/__health") return json({ ok: true, durableObject: "GameRooms" });
     if (request.headers.get("Upgrade")?.toLowerCase() !== "websocket") return json({ error: "WebSocket requerido" }, 426);
     const pair = new WebSocketPair(), client = pair[0], server = pair[1]; server.accept();
     const conn = { ws: server, user: null, room: null, last: 0, burst: 0 };
