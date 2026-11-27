@@ -11,12 +11,18 @@
     "start": "node index.js",
     "test": "node --test",
     "desktop": "npm --prefix desktop start",
-    "dist:win": "npm --prefix desktop run dist:win"
+    "dist:win": "npm --prefix desktop run dist:win",
+    "cf:dev": "wrangler dev --config wrangler.toml",
+    "cf:deploy": "wrangler deploy --config wrangler.toml",
+    "cf:d1:apply": "wrangler d1 migrations apply grena-contexto --remote"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.0.0",
     "better-sqlite3": "^11.0.0",
     "express": "^4.19.2",
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.50.0"
   }
 }
