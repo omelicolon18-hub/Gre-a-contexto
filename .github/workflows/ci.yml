@@ -16,3 +16,5 @@ jobs:
           node-version: 20
       - run: npm install --no-audit --no-fund --onnxruntime-node-install-cuda=skip
       - run: npm test
+      - run: node --check cloudflare/worker.js
+      - run: node --check build-vocab.js
