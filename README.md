@@ -22,6 +22,18 @@ Juego multijugador en tiempo real: todos buscan la misma palabra secreta y el se
 
 El servidor necesita un proceso Node/Docker persistente, WebSockets y volumen. El repositorio no puede crear el servicio ni dominio sin conectar la cuenta de Railway. Las salas están en memoria y se pierden si el servidor se reinicia; perfiles y WINS permanecen en SQLite con volumen persistente.
 
+## Migración a Cloudflare (en preparación)
+
+Se añadió una base inicial de Cloudflare Workers, D1 y Durable Objects:
+- `wrangler.toml`: recursos y bindings previstos.
+- `cloudflare/migrations/0001_initial.sql`: tablas de jugadores y victorias.
+- `cloudflare/worker.js`: endpoints de salud, perfil y clasificación.
+- `cloudflare/README.md`: estado y pasos técnicos.
+
+**Importante:** esto todavía no sustituye al servidor Node actual. La conexión WebSocket y el motor de similitud semántica siguen pendientes de migración. El Worker responde 503 a las conexiones de juego para no presentar como funcional algo que aún no está terminado. No configures todavía el EXE para usar el Worker.
+
+Cuando se conecte una cuenta Cloudflare habrá que crear la base D1, completar la migración de salas y vocabulario, desplegar y probar partidas entre dos dispositivos.
+
 ## Crear instalador EXE
 1. Abre **Actions**.
 2. Ejecuta **Construir instalador de Windows** con **Run workflow**.
